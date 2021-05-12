@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Messenger</string>
     <string name="type_a_message">Type a message...</string>
+    <string name="textview">TextView</string>
+
+
+    <string name="todo">TODO</string>
+
 </resources>

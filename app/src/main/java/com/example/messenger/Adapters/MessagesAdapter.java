@@ -10,22 +10,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.messenger.Models.Message;
 import com.example.messenger.R;
-import com.example.messenger.databinding.ItemRecivedBinding;
+import com.example.messenger.databinding.ItemReciveBinding;
+
 import com.example.messenger.databinding.ItemSentBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
-public class MessageAdapter extends  RecyclerView.Adapter {
+public class MessagesAdapter extends  RecyclerView.Adapter {
     Context context;
     ArrayList<Message> messages;
     final int ITEM_SENT = 1;
     final int ITEM_RECEIVE = 2;
 
 
-    public MessageAdapter(Context context , ArrayList<Message> messages) {
-            this.context = context;
-            this.messages = messages;
+    public MessagesAdapter(Context context , ArrayList<Message> messages) {
+        this.context = context;
+        this.messages = messages;
     }
     @NonNull
     @Override
@@ -35,7 +36,7 @@ public class MessageAdapter extends  RecyclerView.Adapter {
             return new SentViewHolder(view);
         }
         else{
-            View view = LayoutInflater.from(context).inflate(R.layout.item_recived, parent , false);
+            View view = LayoutInflater.from(context).inflate(R.layout.item_recive, parent , false);
             return new RecieverViewHolder(view);
 
         }
@@ -72,17 +73,17 @@ public class MessageAdapter extends  RecyclerView.Adapter {
     }
 
     public class SentViewHolder extends RecyclerView.ViewHolder {
-    ItemSentBinding binding;
+        ItemSentBinding binding;
         public SentViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = ItemSentBinding.bind(itemView);
         }
     }
     public  class RecieverViewHolder extends  RecyclerView.ViewHolder {
-    ItemRecivedBinding binding;
+        ItemReciveBinding binding;
         public RecieverViewHolder(@NonNull View itemView) {
             super(itemView);
-            binding = ItemRecivedBinding.bind(itemView);
+            binding = ItemReciveBinding.bind(itemView);
         }
     }
 }
