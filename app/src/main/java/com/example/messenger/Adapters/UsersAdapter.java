@@ -14,6 +14,11 @@ import com.example.messenger.Activities.ChatActivity;
 import com.example.messenger.Models.User;
 import com.example.messenger.R;
 import com.example.messenger.databinding.RowConversationBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -35,6 +40,11 @@ public class UsersAdapter extends  RecyclerView.Adapter<UsersAdapter.UserViewHol
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = users.get(position);
+
+
+
+
+
         holder.binding.username.setText(user.getName());
         Glide.with(context).load(user.getProfileImage())
                 .placeholder(R.drawable.avatar)
