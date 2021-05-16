@@ -20,7 +20,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class UsersAdapter extends  RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
     Context context;
@@ -41,8 +45,34 @@ public class UsersAdapter extends  RecyclerView.Adapter<UsersAdapter.UserViewHol
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = users.get(position);
 
+        String senderId = FirebaseAuth.getInstance().getUid();
+        String senderRoom = senderId + user.getUid();
 
+        FirebaseDatabase.getInstance().getReference()
+                .child("chats")
+                .child(senderRoom)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        if(snapshot.exists()) {
+                            String lastMessage = snapshot.child("lastMessage").getValue(String.class);
+                            long lastMessageTime = snapshot.child("lastMessageTime").getValue(Long.class);
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
+                            holder.binding.msgTime.setText(dateFormat.format(new Date(lastMessageTime)));
+                            holder.binding.lastMsg.setText(lastMessage);
 
+                        }
+                        else{
+                            holder.binding.lastMsg.setText("tap to chat");
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                    }
+                });
 
 
         holder.binding.username.setText(user.getName());

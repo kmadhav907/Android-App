@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class ChatActivity extends AppCompatActivity {
     ActivityChatBinding binding;
@@ -32,18 +33,18 @@ public class ChatActivity extends AppCompatActivity {
         binding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        String name = getIntent().getStringExtra("name");
+        String receiverUid = getIntent().getStringExtra("uid");
+        String senderUid = FirebaseAuth.getInstance().getUid();
+        senderRoom = senderUid + receiverUid;
+        receiverRoom = receiverUid + senderUid;
+
         messages = new ArrayList<>();
-        adapter = new MessagesAdapter(this , messages);
+        adapter = new MessagesAdapter(this , messages,senderRoom,receiverRoom);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
 
 
-
-        String name = getIntent().getStringExtra("name");
-        String reciverUid = getIntent().getStringExtra("uid");
-        String senderUid = FirebaseAuth.getInstance().getUid();
-        senderRoom = senderUid + reciverUid;
-        receiverRoom = reciverUid + senderUid;
         database = FirebaseDatabase.getInstance();
         database.getReference().child("chats").child(senderRoom).child("messages").addValueEventListener(new ValueEventListener() {
             @Override
@@ -51,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
                 messages.clear();
                 for(DataSnapshot snapshot1: snapshot.getChildren()){
                     Message message = snapshot1.getValue(Message.class);
+                    message.setMessageId(snapshot1.getKey());
                     messages.add(message);
                 }
                 adapter.notifyDataSetChanged();
@@ -69,22 +71,43 @@ public class ChatActivity extends AppCompatActivity {
                 String messageText = binding.messageBox.getText().toString();
                 Message message = new Message(messageText,senderUid, date.getTime());
                 binding.messageBox.setText("");
-                database.getReference().child("chats").child(senderRoom).child("messages").push().setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
+                String randomKey = database.getReference().push().getKey();
+                HashMap<String,Object> lastMessageObj = new HashMap<>();
+                lastMessageObj.put("lastMessage",message.getMessage());
+                lastMessageObj.put("lastMessageTime",new Date().getTime());
+
+                database.getReference()
+                        .child("chats")
+                        .child(senderRoom)
+                        .updateChildren(lastMessageObj);
+
+                database.getReference()
+                        .child("chats")
+                        .child(receiverRoom)
+                        .updateChildren(lastMessageObj);
+
+                database.getReference()
+                        .child("chats")
+                        .child(senderRoom)
+                        .child("messages")
+                        .child(randomKey)
+                        .setValue(message)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        database.getReference().child("chats").child(receiverRoom).child("messages").push().setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        database.getReference().child("chats").child(receiverRoom).child("messages").child(randomKey).setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
 
                             }
                         });
                     }
+
                 });
             }
         });
 
         getSupportActionBar().setTitle(name);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
