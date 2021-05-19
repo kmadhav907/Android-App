@@ -112,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
                                     Status sampleStatus = statusSnapshot.getValue(Status.class);
                                     perStatues.add(sampleStatus);
                                 }
-
-
                                 userStatus.setStatuses(perStatues);
                                 userStatuses.add(userStatus);
 
