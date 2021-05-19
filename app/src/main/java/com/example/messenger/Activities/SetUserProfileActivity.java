@@ -88,7 +88,7 @@ public class SetUserProfileActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     dialog.dismiss();
-                                                    Toast.makeText(SetUserProfileActivity.this,"successfully saved..",Toast.LENGTH_SHORT);
+
                                                     Intent intent = new Intent(SetUserProfileActivity.this, MainActivity.class);
                                                     startActivity(intent);
                                                     finish();
