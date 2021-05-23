@@ -216,6 +216,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        String currentUid = FirebaseAuth.getInstance().getUid();
+        database.getReference().child("presence").child(currentUid).setValue("Online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        String currentUid = FirebaseAuth.getInstance().getUid();
+        database.getReference().child("presence").child(currentUid).setValue("Offline");
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.search:
