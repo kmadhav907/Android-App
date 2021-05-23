@@ -10,11 +10,17 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.messenger.Adapters.MessagesAdapter;
 import com.example.messenger.Models.Message;
+import com.example.messenger.R;
 import com.example.messenger.databinding.ActivityChatBinding;
 import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,24 +56,64 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
+
+
 
         dialog = new ProgressDialog(this);
         dialog.setMessage("Uploading Image...");
         dialog.setCancelable(false);
+        storage = FirebaseStorage.getInstance();
+        database = FirebaseDatabase.getInstance();
 
         String name = getIntent().getStringExtra("name");
         receiverUid = getIntent().getStringExtra("uid");
+        String profile = getIntent().getStringExtra("image");
         senderUid = FirebaseAuth.getInstance().getUid();
         senderRoom = senderUid + receiverUid;
         receiverRoom = receiverUid + senderUid;
+
+        binding.name.setText(name);
+        Glide.with(ChatActivity.this).load(profile).
+                placeholder(R.drawable.avatar).into(binding.profile);
 
         messages = new ArrayList<>();
         adapter = new MessagesAdapter(this , messages,senderRoom,receiverRoom);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
+        binding.imageView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
-        storage = FirebaseStorage.getInstance();
-        database = FirebaseDatabase.getInstance();
+
+
+        database.getReference().child("presence").child(receiverUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    String status = snapshot.getValue(String.class);
+                    if(!status.isEmpty()) {
+                        if(status.equals("Offline")){
+                            binding.status.setVisibility(View.GONE);
+                        }
+                        else {
+                            binding.status.setText(status);
+                            binding.status.setVisibility(View.VISIBLE);
+                        }
+
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         database.getReference().child("chats").child(senderRoom).child("messages").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -137,9 +183,38 @@ public class ChatActivity extends AppCompatActivity {
                 startActivityForResult(intent , 25);
             }
         });
+        final Handler handler = new Handler();
+        binding.messageBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        getSupportActionBar().setTitle(name);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                database.getReference().child("presence").child(senderUid).setValue("typing...");
+
+                handler.removeCallbacksAndMessages(null);
+                handler.postDelayed(userStoppedTyping , 1000);
+
+            }
+            Runnable userStoppedTyping = new Runnable() {
+                @Override
+                public void run() {
+                    database.getReference().child("presence").child(senderUid).setValue("Online");
+
+                }
+            };
+        });
+
+//        getSupportActionBar().setTitle(name);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
@@ -211,6 +286,18 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String currentUid = FirebaseAuth.getInstance().getUid();
+        database.getReference().child("presence").child(currentUid).setValue("Online");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        String currentId = FirebaseAuth.getInstance().getUid();
+        database.getReference().child("presence").child(currentId).setValue("Offline");
     }
 
     @Override

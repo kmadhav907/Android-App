@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Messenger"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.ChatActivity"></activity>
+        <activity android:name=".Activities.ChatActivity" android:theme="@style/Theme.Messenger.NoActionBar"></activity>
         <activity android:name=".Activities.SetUserProfileActivity" />
         <activity
             android:name=".Activities.OTPActivity"
