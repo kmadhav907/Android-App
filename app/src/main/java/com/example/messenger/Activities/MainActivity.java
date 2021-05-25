@@ -112,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
                                     Status sampleStatus = statusSnapshot.getValue(Status.class);
                                     perStatues.add(sampleStatus);
                                 }
-
-
                                 userStatus.setStatuses(perStatues);
                                 userStatuses.add(userStatus);
 
@@ -235,17 +233,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.search:
-                Toast.makeText(this,"Search Clicked", Toast.LENGTH_LONG).show();
-                break;
-            case R.id.settings:
-                Toast.makeText(this,"Settings Clicked", Toast.LENGTH_LONG).show();
-                break;
-            case R.id.invite:
-                Toast.makeText(this, "Invite Clicked", Toast.LENGTH_LONG).show();
-                break;
             case R.id.groups:
-                Toast.makeText(this, "Groups Clicked", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(MainActivity.this,GroupChatActivity.class);
+                startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);
