@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.example.messenger.Adapters.GroupMessagesAdapter;
 import com.example.messenger.Adapters.MessagesAdapter;
 import com.example.messenger.Models.Message;
@@ -68,6 +69,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot1: snapshot.getChildren()){
                     Message message = snapshot1.getValue(Message.class);
                     message.setMessageId(snapshot1.getKey());
+
                     messages.add(message);
                 }
                 adapter.notifyDataSetChanged();
@@ -78,21 +80,23 @@ public class GroupChatActivity extends AppCompatActivity {
 
             }
         });
-
-
-
+        Glide.with(GroupChatActivity.this).load(R.drawable.ic_send).
+                into(binding.sendBtn);
+        Glide.with(GroupChatActivity.this ).load(R.drawable.ic_attachment).into(binding.attachment);
         binding.sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Date date = new Date();
 
                 String messageText = binding.messageBox.getText().toString();
+
+                if(messageText.length()  != 0 ){
                 Message message = new Message(messageText,senderUid, date.getTime());
                 binding.messageBox.setText("");
                 database.getReference().child("public")
                         .push()
                         .setValue(message);
-            }
+            }}
         });
 
         binding.attachment.setOnClickListener(new View.OnClickListener() {

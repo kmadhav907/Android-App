@@ -27,7 +27,7 @@
             android:id="@+id/view4"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#C6C2C2" />
+            android:background="#F38CF8" />
 
         <ImageView
             android:id="@+id/image"
@@ -47,6 +47,7 @@
             android:paddingRight="10dp"
             android:paddingBottom="5dp"
             android:text="TextView"
+            android:textColor="#131313"
             android:textSize="13sp" />
     </LinearLayout>
 
