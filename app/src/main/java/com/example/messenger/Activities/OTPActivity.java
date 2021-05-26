@@ -44,7 +44,7 @@ public class OTPActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         String phoneNumber = getIntent().getStringExtra(AuthenticationActivity.PHONE_NUMBER_KEY);
-        binding.phoneLabel.setText("verify " + phoneNumber);
+        binding.phoneLabel.setText("Verify " + phoneNumber);
 
         //creating options for the server to send OTP to the phone
         PhoneAuthOptions options = PhoneAuthOptions.newBuilder(auth)

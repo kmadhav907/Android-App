@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/sent_drawable"
         android:orientation="vertical"
+        android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -20,6 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:textColor="#B1AEAE"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -27,7 +29,7 @@
             android:id="@+id/view2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#C6C2C2" />
+            android:background="#870CF4" />
 
         <ImageView
             android:id="@+id/image"
@@ -47,6 +49,7 @@
             android:paddingRight="10dp"
             android:paddingBottom="5dp"
             android:text="TextView"
+            android:textColor="#E1E1E1"
             android:textSize="13sp" />
     </LinearLayout>
 
